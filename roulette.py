@@ -43,6 +43,7 @@ def print_instructions():
     print("Use the above diagram to add chips to edges of a number (except 0). For example u1 to add chips on top edge of number 1.")
     print("To place chip at the corner between 3-4 numbers, use cN, where N is the largest of the numbers.")
     print("For the remainder, add chips as appeared on the board.")
+    print("To remove chips, use a negative number (-x) when prompted.")
 
 #Input handling
 def get_input(prompt):
@@ -112,21 +113,69 @@ def main_loop():
     chip_amount = 100
     user_input = ""
     location = ""
+    num_chips = 0
+    chip_placement = {}
 
     try:
-        #Ask player the positions to place chips
-        while user_input != 'done':
-            while True:
-                user_input = get_input("Where would you like to place your chips?")
+        while user_input != "done":
+
+            #Ask player the positions to place chips
+            while user_input != "done":
+
+                user_input = get_input("Where would you like to place your chips? ")
+                if user_input == "done":
+                    break
+
                 location = user_input
+
                 if is_location(location):
                     break
                 else:
                     print("Error: Please enter a valid location on the board")
                     continue
 
-        #Ask how many chips to add at that location
-            user_input = get_input(f"How many chips to place at {location}?")
+            #Ask how many chips to add at that location
+            while user_input != "done":
+                user_input = get_input(f"How many chips to place at {location}? ")
+
+                if user_input == "done":
+                    break
+
+                try:
+                    num_chips = int(user_input)
+                    
+                    #Check if there is enough chips to add
+                    if num_chips > chip_amount:
+                        print("You don't have that many chips! Please try again")
+                        continue
+
+                    #Removing chips
+                    elif num_chips < 0:
+                        #Check if there are enough chips to remove
+                        if location not in chip_placement:
+                            print(f"You don't have chips to remove at {location}")
+                            continue
+                        elif -num_chips > chip_placement[location]:
+                            print(f"You only have {chip_placement[location]} chips at {location}.")
+                            continue
+                        else:
+                            chip_placement[location] += num_chips
+                            chip_amount -= num_chips
+                            break
+
+                    # Adding chips
+                    else:
+                        if location in chip_placement:
+                            chip_placement[location] += num_chips
+                        else:
+                            chip_placement[location] = num_chips
+                        chip_amount -= num_chips
+                        break
+
+                except ValueError:
+                    print("Error: value provided is not numerical.")
+                    continue
+        
     except KeyboardInterrupt:
         print(f"Thanks for playing! You finished with {chip_amount} chips in your stack.")
     
