@@ -5,6 +5,8 @@ import random
 #Global variables/parameters
 valid_locations = ["R1", "R2", "R3", "1-12", "13-24", "25-36", "1-18", "19-36", "EVEN", "ODD", "RED", "BLACK"]
 location_syntax = ["u", "l", "d", "r", "c"]
+red_numbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+black_numbers = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]
 
 # Create string for the roulette game board
 def draw_board():
@@ -115,11 +117,73 @@ def spin_wheel():
     print("Spinning. . .")
     time.sleep(2)
 
+    #Choose random integar between 0 and 36
     selected_number = random.randrange(0, 37)
     print(f"The silver ball has chosen! The selected number is {selected_number}!")
     return selected_number
 
+# Returns a number list of the betted numbers given a location string
+def location_to_number(location):
+    betted_numbers = []
 
+    if location == "1-12":
+        betted_numbers = list(range(1, 13))
+    elif location == "13-24":
+        betted_numbers = list(range(13, 25))
+    elif location == "25-36":
+        betted_numbers = list(range(25, 37))
+    elif location == "1-18":
+        betted_numbers = list(range(1, 19))
+    elif location == "19-36":
+        betted_numbers = list(range(19, 37))
+    elif location == "ODD":
+        betted_numbers = list(range(1, 37, 2))
+    elif location == "EVEN":
+        betted_numbers = list(range(2, 37, 2))
+    elif location == "R1":
+        betted_numbers = list(range(1, 37, 3))
+    elif location == "R2":
+        betted_numbers = list(range(2, 37, 3))
+    elif location == "R3":
+        betted_numbers = list(range(3, 37, 3))
+    elif location == "BLACK":
+        betted_numbers = black_numbers
+    elif location == "RED":
+        betted_numbers = red_numbers
+    elif location[0] == "u":
+        number = int(location[1:])
+        if number % 3 == 0:
+            betted_numbers = [number, number - 1, number - 2]
+        else:
+            betted_numbers = [number, number + 1]
+    elif location[0] == "d":
+        number = int(location[1:])
+        if number % 3 == 1:
+            betted_numbers = [number, number + 1, number + 2]
+        else:
+            betted_numbers = [number, number - 1]
+    elif location[0] == "l":
+        number = int(location[1:])
+        if number < 3:
+            betted_numbers = [number, 0]
+        else:
+            betted_numbers = [number, number - 3]
+    elif location[0] == "r":
+        number = int(location[1:])
+        betted_numbers = [number, number + 3]
+    elif location[0] == "c":
+        number = int(location[1:])
+        if number <= 3:
+            betted_numbers = [0, number, number - 1]
+        else:
+            betted_numbers = [number, number - 1, number - 3, number - 4]
+    else:
+        betted_numbers.append(int(location))
+
+    return betted_numbers
+
+def calculate_winnings(chip_placement):
+    pass
 
 ##  Game play loop
 def main_loop():
@@ -132,11 +196,13 @@ def main_loop():
     user_input = ""
     location = ""
     num_chips = 0
-    chip_placement = {}
-    winnings = [0] * 37
+    
 
     try:
         while True:
+            #Variables that refresh after each spin
+            chip_placement = {}
+        
             while user_input != "done":
 
                 #Ask player the positions to place chips
