@@ -1,3 +1,7 @@
+#Import
+import time
+import random
+
 #Global variables/parameters
 valid_locations = ["R1", "R2", "R3", "1-12", "13-24", "25-36", "1-18", "19-36", "EVEN", "ODD", "RED", "BLACK"]
 location_syntax = ["u", "l", "d", "r", "c"]
@@ -103,10 +107,24 @@ def is_location(user_input):
     else:
         return False
 
+# Roulette wheel spin
+
+def spin_wheel():
+    print("Ready? Let's spin the wheel!")
+    time.sleep(1)
+    print("Spinning. . .")
+    time.sleep(2)
+
+    selected_number = random.randrange(0, 37)
+    print(f"The silver ball has chosen! The selected number is {selected_number}!")
+    return selected_number
+
+
+
 ##  Game play loop
 def main_loop():
     # Introduction and Board
-    print("Welcome to a game of Roulette! Let's start with 100 chips.")
+    print("Welcome to a game of Roulette! Let's start with 100 chips. Enter 'done' to spin the wheel.")
     draw_board()
     print("Type the following at any time during the game:\nhelp - for instructions\nboard - to view board\nquit - to quit game")
 
@@ -115,71 +133,76 @@ def main_loop():
     location = ""
     num_chips = 0
     chip_placement = {}
+    winnings = [0] * 37
 
     try:
-        while user_input != "done":
-
-            #Ask player the positions to place chips
+        while True:
             while user_input != "done":
 
-                user_input = get_input("Where would you like to place your chips? ")
-                if user_input == "done":
-                    break
+                #Ask player the positions to place chips
+                while user_input != "done":
 
-                location = user_input
+                    user_input = get_input("Where would you like to place your chips? ")
+                    if user_input == "done":
+                        break
 
-                if is_location(location):
-                    break
-                else:
-                    print("Error: Please enter a valid location on the board")
-                    continue
+                    location = user_input
 
-            #Ask how many chips to add at that location
-            while user_input != "done":
-                user_input = get_input(f"How many chips to place at {location}? ")
-
-                if user_input == "done":
-                    break
-
-                try:
-                    num_chips = int(user_input)
-                    
-                    #Check if there is enough chips to add
-                    if num_chips > chip_amount:
-                        print("You don't have that many chips! Please try again")
+                    if is_location(location):
+                        break
+                    else:
+                        print("Error: Please enter a valid location on the board")
                         continue
 
-                    #Removing chips
-                    elif num_chips < 0:
-                        #Check if there are enough chips to remove
-                        if location not in chip_placement:
-                            print(f"You don't have chips to remove at {location}")
+                #Ask how many chips to add at that location
+                while user_input != "done":
+                    user_input = get_input(f"How many chips to place at {location}? ")
+
+                    if user_input == "done":
+                        break
+
+                    try:
+                        num_chips = int(user_input)
+                        
+                        #Check if there is enough chips to add
+                        if num_chips > chip_amount:
+                            print("You don't have that many chips! Please try again")
                             continue
-                        elif -num_chips > chip_placement[location]:
-                            print(f"You only have {chip_placement[location]} chips at {location}.")
-                            continue
+
+                        #Removing chips
+                        elif num_chips < 0:
+                            #Check if there are enough chips to remove
+                            if location not in chip_placement:
+                                print(f"You don't have chips to remove at {location}")
+                                continue
+                            elif -num_chips > chip_placement[location]:
+                                print(f"You only have {chip_placement[location]} chips at {location}.")
+                                continue
+                            else:
+                                chip_placement[location] += num_chips
+                                chip_amount -= num_chips
+                                break
+
+                        # Adding chips
                         else:
-                            chip_placement[location] += num_chips
+                            if location in chip_placement:
+                                chip_placement[location] += num_chips
+                            else:
+                                chip_placement[location] = num_chips
                             chip_amount -= num_chips
                             break
 
-                    # Adding chips
-                    else:
-                        if location in chip_placement:
-                            chip_placement[location] += num_chips
-                        else:
-                            chip_placement[location] = num_chips
-                        chip_amount -= num_chips
-                        break
+                    except ValueError:
+                        print("Error: value provided is not numerical.")
+                        continue
+            # Spin the wheel
+            selected_number = spin_wheel()
 
-                except ValueError:
-                    print("Error: value provided is not numerical.")
-                    continue
+            user_input = ""
+        
         
     except KeyboardInterrupt:
         print(f"Thanks for playing! You finished with {chip_amount} chips in your stack.")
     
-
-    #Update variable chip_placement accordingly
 
 main_loop()
