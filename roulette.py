@@ -1,6 +1,7 @@
 #Import
 import time
 import random
+import sys
 
 #Global variables/parameters
 valid_locations = ["R1", "R2", "R3", "1-12", "13-24", "25-36", "1-18", "19-36", "EVEN", "ODD", "RED", "BLACK"]
@@ -128,64 +129,92 @@ def location_to_number(location):
 
     if location == "1-12":
         betted_numbers = list(range(1, 13))
+
     elif location == "13-24":
         betted_numbers = list(range(13, 25))
+
     elif location == "25-36":
         betted_numbers = list(range(25, 37))
+
     elif location == "1-18":
         betted_numbers = list(range(1, 19))
+
     elif location == "19-36":
         betted_numbers = list(range(19, 37))
+
     elif location == "ODD":
         betted_numbers = list(range(1, 37, 2))
+
     elif location == "EVEN":
         betted_numbers = list(range(2, 37, 2))
+
     elif location == "R1":
         betted_numbers = list(range(1, 37, 3))
+
     elif location == "R2":
         betted_numbers = list(range(2, 37, 3))
+
     elif location == "R3":
         betted_numbers = list(range(3, 37, 3))
+
     elif location == "BLACK":
         betted_numbers = black_numbers
+
     elif location == "RED":
         betted_numbers = red_numbers
+
     elif location[0] == "u":
         number = int(location[1:])
+
+        # u of numbers in the top row (R3) represents the entire column
         if number % 3 == 0:
             betted_numbers = [number, number - 1, number - 2]
         else:
             betted_numbers = [number, number + 1]
+
     elif location[0] == "d":
         number = int(location[1:])
+        # d of numbers in the bottom row (R1) represents the entire column
         if number % 3 == 1:
             betted_numbers = [number, number + 1, number + 2]
         else:
             betted_numbers = [number, number - 1]
+
     elif location[0] == "l":
         number = int(location[1:])
         if number < 3:
             betted_numbers = [number, 0]
         else:
             betted_numbers = [number, number - 3]
+
     elif location[0] == "r":
         number = int(location[1:])
         betted_numbers = [number, number + 3]
+
     elif location[0] == "c":
         number = int(location[1:])
         if number <= 3:
             betted_numbers = [0, number, number - 1]
         else:
             betted_numbers = [number, number - 1, number - 3, number - 4]
+
     else:
         betted_numbers.append(int(location))
 
     return betted_numbers
 
+# Calculate the payout amount for each number based on player's chip placement
 def calculate_winnings(chip_placement):
-    pass
+    winnings = [0] * 37
 
-##  Game play loop
+    for location, num_chips in chip_placement.items():
+        betted_numbers = location_to_number(location)
+        for number in betted_numbers:
+            winnings[number] += 36 * num_chips / len(betted_numbers)
+        
+    return winnings
+
+#  Game play loop
 def main_loop():
     # Introduction and Board
     print("Welcome to a game of Roulette! Let's start with 100 chips. Enter 'done' to spin the wheel.")
@@ -232,7 +261,7 @@ def main_loop():
                         
                         #Check if there is enough chips to add
                         if num_chips > chip_amount:
-                            print("You don't have that many chips! Please try again")
+                            print(f"Unfortunately you can't bet more than you have ({chip_amount} chips). Please try again")
                             continue
 
                         #Removing chips
@@ -261,8 +290,24 @@ def main_loop():
                     except ValueError:
                         print("Error: value provided is not numerical.")
                         continue
+        
             # Spin the wheel
             selected_number = spin_wheel()
+
+            #Calculate winning amount
+            winnings = calculate_winnings(chip_placement)
+            amount_won = winnings[selected_number]
+
+            #Update player chip stack and inform player of current game state
+            if amount_won > 0:
+                chip_amount += amount_won
+                print(f"Congratulations! You won {amount_won} chips. You now have {chip_amount} chips in your stack.")
+
+            elif chip_amount == 0:
+                sys.exit("Game over! You have ran out of chips. Rerun the application to play again.")
+
+            else:
+                print(f"I'm sure you will win on the next spin! You have {chip_amount} chips remaining.")
 
             user_input = ""
         
