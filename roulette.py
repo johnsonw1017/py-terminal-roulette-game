@@ -6,6 +6,7 @@ import sys
 #Global variables/parameters
 valid_locations = ["R1", "R2", "R3", "1-12", "13-24", "25-36", "1-18", "19-36", "EVEN", "ODD", "RED", "BLACK"]
 location_syntax = ["u", "l", "d", "r", "c"]
+user_commands = ["help", "board", "quit"]
 red_numbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
 black_numbers = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]
 
@@ -42,7 +43,7 @@ def draw_board():
     print("    |     1-12      |     13-24     |     25-36     |")
     print(row_top3)
     print("    |  1-18 |  EVEN |  RED  | BLACK |  ODD  | 19-36 |")
-    print(row_top3)
+    print(row_top3, end="\n\n")
 
 #Player instructions
 def print_instructions():
@@ -50,7 +51,7 @@ def print_instructions():
     print("Use the above diagram to add chips to edges of a number (except 0). For example u1 to add chips on top edge of number 1.")
     print("To place chip at the corner between 3-4 numbers, use cN, where N is the largest of the numbers.")
     print("For the remainder, add chips as appeared on the board.")
-    print("To remove chips, use a negative number (-x) when prompted.")
+    print("To remove chips, use a negative number (-x) when prompted.\n")
 
 #Input handling
 def get_input(prompt):
@@ -90,7 +91,7 @@ def is_location(user_input):
         elif user_input[0] == "c" and location_number in range(1, 37) and location_number % 3 != 1:
             return True
         #syntax u, d, l is valid as long as number is between 1 and 36
-        elif user_input[0] in location_syntax[:2] and location_number in range(1, 37):
+        elif user_input[0] in location_syntax[:3] and location_number in range(1, 37):
             return True
         else:
             return False
@@ -121,6 +122,7 @@ def spin_wheel():
     #Choose random integar between 0 and 36
     selected_number = random.randrange(0, 37)
     print(f"The silver ball has chosen! The selected number is {selected_number}!")
+    time.sleep(2)
     return selected_number
 
 # Returns a number list of the betted numbers given a location string
@@ -225,6 +227,7 @@ def main_loop():
     user_input = ""
     location = ""
     num_chips = 0
+    num_spins = 0
     
 
     try:
@@ -245,6 +248,8 @@ def main_loop():
 
                     if is_location(location):
                         break
+                    elif user_input in user_commands:
+                        continue
                     else:
                         print("Error: Please enter a valid location on the board")
                         continue
@@ -293,6 +298,7 @@ def main_loop():
         
             # Spin the wheel
             selected_number = spin_wheel()
+            num_spins += 1
 
             #Calculate winning amount
             winnings = calculate_winnings(chip_placement)
@@ -304,16 +310,15 @@ def main_loop():
                 print(f"Congratulations! You won {amount_won} chips. You now have {chip_amount} chips in your stack.")
 
             elif chip_amount == 0:
-                sys.exit("Game over! You have ran out of chips. Rerun the application to play again.")
+                sys.exit(f"Game over! You have ran out of chips. You lasted {num_spins} spins. Rerun the application to play again.")
 
             else:
                 print(f"I'm sure you will win on the next spin! You have {chip_amount} chips remaining.")
 
             user_input = ""
         
-        
     except KeyboardInterrupt:
-        print(f"Thanks for playing! You finished with {chip_amount} chips in your stack.")
+        print(f"Thanks for playing! You finished with {chip_amount} chips in your stack and you lasted {num_spins} spins.")
     
 
 main_loop()
