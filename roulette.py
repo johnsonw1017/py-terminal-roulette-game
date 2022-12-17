@@ -58,7 +58,7 @@ def get_input(prompt):
     
     user_input = input(prompt)
 
-    # when user inputs "board", "help" or "quit"
+    # when player inputs "board", "help" or "quit"
     if user_input == "board":
         draw_board()
 
@@ -217,18 +217,15 @@ def calculate_winnings(chip_placement):
     return winnings
 
 #  Game play loop
-def main_loop():
+def main_loop(chip_amount=100, num_spins=0):
     # Introduction and Board
     print("Welcome to a game of Roulette! Let's start with 100 chips. Enter 'done' to spin the wheel.")
     draw_board()
     print("Type the following at any time during the game:\nhelp - for instructions\nboard - to view board\nquit - to quit game")
 
-    chip_amount = 100
     user_input = ""
     location = ""
     num_chips = 0
-    num_spins = 0
-    
 
     try:
         while True:
@@ -316,7 +313,8 @@ def main_loop():
                 print(f"I'm sure you will win on the next spin! You have {chip_amount} chips remaining.")
 
             user_input = ""
-        
+    
+    # When player enters "quit" when prompted
     except KeyboardInterrupt:
         print(f"Thanks for playing! You finished with {chip_amount} chips in your stack and you lasted {num_spins} spins.")
     
