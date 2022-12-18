@@ -1,0 +1,3 @@
+([('roulette',
+   '/Users/johns/Code/JohnsonWang_T1A3/dist/roulette',
+   'EXECUTABLE')],)
