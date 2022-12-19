@@ -109,4 +109,4 @@ The implementation plan was placed on Trello for progress tracking purposes. Bel
 
 ## Links
 - [GitHub Respository](https://github.com/johnsonw1017/roulette)
-- [Presentation]()
+- [Presentation](https://youtu.be/9ZgzezI2Xt4)
