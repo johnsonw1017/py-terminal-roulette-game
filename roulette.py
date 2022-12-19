@@ -111,6 +111,14 @@ def is_location(user_input):
     else:
         return False
 
+def test_is_location_HappyPath():
+    assert is_location("U2") == False
+
+def test_calculate_winnings_HappyPath():
+    chip_placement = {"6":2}
+    winnings = calculate_winnings(chip_placement)
+    assert winnings[6] == 72
+
 # Roulette wheel spin
 
 def spin_wheel():

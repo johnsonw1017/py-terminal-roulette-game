@@ -106,3 +106,7 @@ The implementation plan was placed on Trello for progress tracking purposes. Bel
 ![Trello Game Interface](docs/trello2.png)
 ![Trello Game Support](docs/trello3.png)
 ![Trello Game State Control](docs/trello4.png)
+
+## Links
+- [GitHub Respository](https://github.com/johnsonw1017/roulette)
+- [Presentation]()
