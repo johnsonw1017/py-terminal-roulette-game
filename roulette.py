@@ -318,5 +318,4 @@ def main_loop(chip_amount=100, num_spins=0):
     except KeyboardInterrupt:
         print(f"Thanks for playing! You finished with {chip_amount} chips in your stack and you lasted {num_spins} spins.")
     
-
 main_loop()
